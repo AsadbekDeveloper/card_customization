@@ -18,8 +18,6 @@ class CardCustomizationBloc extends Bloc<CardCustomizationEvent, CardCustomizati
         state.copyWith(
           data: CardCustomizationData(
             imagePath: event.imagePath,
-            scale: state.data.scale,
-            offset: state.data.offset,
             blur: state.data.blur,
           ),
           status: CardCustomizationStatus.initial,
@@ -35,8 +33,6 @@ class CardCustomizationBloc extends Bloc<CardCustomizationEvent, CardCustomizati
           state.copyWith(
             data: CardCustomizationData(
               imageFile: File(pickedFile.path),
-              scale: state.data.scale,
-              offset: state.data.offset,
               blur: state.data.blur,
             ),
             status: CardCustomizationStatus.initial,

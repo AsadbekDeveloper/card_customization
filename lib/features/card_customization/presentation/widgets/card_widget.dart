@@ -37,13 +37,15 @@ class _CardWidgetState extends State<CardWidget> {
           child: GestureDetector(
             onScaleStart: (details) {
               _scale = state.data.scale;
+              _offset = state.data.offset;
             },
             onScaleUpdate: (details) {
+              final deltaScale = (details.scale - 1) * 0.2;
+              final newScale = (_scale + deltaScale).clamp(0.5, 3.0);
+
+              context.read<CardCustomizationBloc>().add(ScaleUpdated(newScale));
               context.read<CardCustomizationBloc>().add(
-                ScaleUpdated(state.data.scale * details.scale),
-              );
-              context.read<CardCustomizationBloc>().add(
-                PositionUpdated(state.data.offset + details.focalPointDelta),
+                PositionUpdated(_offset + details.focalPointDelta),
               );
             },
             child: ClipRRect(
@@ -51,6 +53,7 @@ class _CardWidgetState extends State<CardWidget> {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
+                  ColoredBox(color: Colors.grey),
                   Container(
                     decoration: BoxDecoration(
                       gradient:
@@ -87,7 +90,7 @@ class _CardWidgetState extends State<CardWidget> {
 
                   BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: state.data.blur, sigmaY: state.data.blur),
-                    child: Container(color: Colors.transparent),
+                    child: Container(color: Colors.black12),
                   ),
                   Positioned(
                     top: 24,

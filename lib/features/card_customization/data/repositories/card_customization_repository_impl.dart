@@ -11,7 +11,6 @@ class CardCustomizationRepositoryImpl implements CardCustomizationRepository {
     Uint8List? compressedImageBytes,
   }) async {
     await Future.delayed(const Duration(seconds: 2));
-
     final mockPayload = {
       'blur': data.blur,
       'color1': data.color1?.value.toRadixString(16),
