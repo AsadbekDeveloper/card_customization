@@ -34,3 +34,5 @@ class BlurChanged extends CardCustomizationEvent {
 
   BlurChanged(this.blur);
 }
+
+class SaveCustomization extends CardCustomizationEvent {}

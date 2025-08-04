@@ -1,3 +1,5 @@
+import 'package:card_customization/features/card_customization/data/repositories/card_customization_repository_impl.dart';
+import 'package:card_customization/features/card_customization/domain/usecases/save_card_customization.dart';
 import 'package:card_customization/features/card_customization/presentation/bloc/card_customization_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,7 +15,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => CardCustomizationBloc(),
+      create: (context) => CardCustomizationBloc(
+        SaveCardCustomization(
+          CardCustomizationRepositoryImpl(),
+        ),
+      ),
       child: MaterialApp(
         title: 'Card Customization',
         debugShowCheckedModeBanner: false,
