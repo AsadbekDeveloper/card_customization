@@ -1,8 +1,7 @@
 import 'dart:typed_data';
-import 'dart:developer';
-import 'dart:async';
 import 'package:card_customization/features/card_customization/data/models/card_customization_data.dart';
 import 'package:card_customization/features/card_customization/domain/repositories/card_customization_repository.dart';
+import 'package:flutter/widgets.dart';
 
 class CardCustomizationRepositoryImpl implements CardCustomizationRepository {
   @override
@@ -10,7 +9,6 @@ class CardCustomizationRepositoryImpl implements CardCustomizationRepository {
     required CardCustomizationData data,
     Uint8List? compressedImageBytes,
   }) async {
-    await Future.delayed(const Duration(seconds: 2));
     final mockPayload = {
       'blur': data.blur,
       'color1': data.color1?.value.toRadixString(16),
@@ -19,15 +17,17 @@ class CardCustomizationRepositoryImpl implements CardCustomizationRepository {
       'imageBytesLength': compressedImageBytes?.lengthInBytes,
     };
 
-    log('🔁 Sending mock customization payload:');
-    log(mockPayload.toString());
+    await Future.delayed(const Duration(seconds: 2));
+
+    debugPrint('🔁 Sending mock customization payload:');
+    debugPrint(mockPayload.toString());
 
     final isSuccess = true;
 
     if (isSuccess) {
-      log('✅ Customization "saved" successfully (mock).');
+      debugPrint('✅ Customization "saved" successfully (mock).');
     } else {
-      log('❌ Failed to "save" customization (mock).');
+      debugPrint('❌ Failed to "save" customization (mock).');
       throw Exception('Mock API save failed');
     }
   }

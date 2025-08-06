@@ -1,6 +1,7 @@
 import 'package:card_customization/features/card_customization/presentation/bloc/card_customization_bloc.dart';
 import 'package:card_customization/features/card_customization/presentation/bloc/card_customization_event.dart';
 import 'package:card_customization/features/card_customization/presentation/widgets/save_button.dart';
+import 'package:card_customization/shared/utils/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../widgets/card_widget.dart';
@@ -16,6 +17,14 @@ class CardCustomizationPage extends StatefulWidget {
 }
 
 class _CardCustomizationPageState extends State<CardCustomizationPage> {
+  bool _isInteracting = false;
+
+  void _setInteracting(bool value) {
+    if (_isInteracting != value) {
+      setState(() => _isInteracting = value);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -27,38 +36,28 @@ class _CardCustomizationPageState extends State<CardCustomizationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Customize Card')),
+      appBar: AppBar(title: const Text('Customize Card'), surfaceTintColor: Colors.white),
       body: SafeArea(
         child: BlocListener<CardCustomizationBloc, CardCustomizationState>(
           listener: (context, state) {
-            final messenger = ScaffoldMessenger.of(context);
-
-            void showStyledSnackBar(String message, {Color? color}) {
-              messenger.clearSnackBars();
-              messenger.showSnackBar(
-                SnackBar(
-                  content: Text(
-                    message,
-                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
-                  ),
-                  backgroundColor: color ?? Colors.grey[900],
-                  behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  duration: const Duration(seconds: 2),
-                ),
-              );
-            }
-
             switch (state.status) {
               case CardCustomizationStatus.loading:
-                showStyledSnackBar('Saving customization...', color: Colors.blueAccent);
+                AppSnackbar.showStyledSnackBar(
+                  context,
+                  'Saving customization...',
+                  color: Colors.blueAccent,
+                );
                 break;
               case CardCustomizationStatus.success:
-                showStyledSnackBar('Customization saved successfully!', color: Colors.green);
+                AppSnackbar.showStyledSnackBar(
+                  context,
+                  'Customization saved successfully!',
+                  color: Colors.green,
+                );
                 break;
               case CardCustomizationStatus.failure:
-                showStyledSnackBar(
+                AppSnackbar.showStyledSnackBar(
+                  context,
                   'Failed to save customization: ${state.errorMessage}',
                   color: Colors.redAccent,
                 );
@@ -68,10 +67,15 @@ class _CardCustomizationPageState extends State<CardCustomizationPage> {
             }
           },
           child: CustomScrollView(
+            physics: _isInteracting
+                ? const NeverScrollableScrollPhysics()
+                : const BouncingScrollPhysics(),
             slivers: [
               SliverPadding(
                 padding: const EdgeInsets.all(16),
-                sliver: const SliverToBoxAdapter(child: CardWidget()),
+                sliver: SliverToBoxAdapter(
+                  child: CardWidget(onInteractionChanged: _setInteracting),
+                ),
               ),
               SliverPadding(
                 padding: const EdgeInsets.all(16),

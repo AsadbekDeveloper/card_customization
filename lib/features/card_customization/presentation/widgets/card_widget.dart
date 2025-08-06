@@ -6,46 +6,27 @@ import '../bloc/card_customization_bloc.dart';
 import '../bloc/card_customization_event.dart';
 import '../bloc/card_customization_state.dart';
 
-class CardWidget extends StatefulWidget {
-  const CardWidget({super.key});
+class CardWidget extends StatelessWidget {
+  final void Function(bool interacting)? onInteractionChanged;
 
-  @override
-  State<CardWidget> createState() => _CardWidgetState();
-}
-
-class _CardWidgetState extends State<CardWidget> {
-  late double _scale;
-  late Offset _offset;
-
-  @override
-  void initState() {
-    super.initState();
-    _scale = context.read<CardCustomizationBloc>().state.data.scale;
-    _offset = context.read<CardCustomizationBloc>().state.data.offset;
-  }
+  const CardWidget({super.key, this.onInteractionChanged});
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<CardCustomizationBloc, CardCustomizationState>(
-      listener: (context, state) {
-        _scale = state.data.scale;
-        _offset = state.data.offset;
-      },
+    return BlocBuilder<CardCustomizationBloc, CardCustomizationState>(
       builder: (context, state) {
         return AspectRatio(
           aspectRatio: 16 / 9,
           child: GestureDetector(
-            onScaleStart: (details) {
-              _scale = state.data.scale;
-              _offset = state.data.offset;
-            },
+            onScaleStart: (_) => onInteractionChanged?.call(true),
+            onScaleEnd: (_) => onInteractionChanged?.call(false),
             onScaleUpdate: (details) {
               final deltaScale = (details.scale - 1) * 0.2;
-              final newScale = (_scale + deltaScale).clamp(0.5, 3.0);
+              final newScale = (state.data.scale + deltaScale).clamp(0.5, 3.0);
 
               context.read<CardCustomizationBloc>().add(ScaleUpdated(newScale));
               context.read<CardCustomizationBloc>().add(
-                PositionUpdated(_offset + details.focalPointDelta),
+                PositionUpdated(state.data.offset + details.focalPointDelta),
               );
             },
             child: ClipRRect(
@@ -87,7 +68,6 @@ class _CardWidgetState extends State<CardWidget> {
                           )
                         : null,
                   ),
-
                   BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: state.data.blur, sigmaY: state.data.blur),
                     child: Container(color: Colors.black12),
