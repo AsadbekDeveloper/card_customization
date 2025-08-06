@@ -8,18 +8,16 @@ import 'card_customization_event.dart';
 import 'card_customization_state.dart';
 
 class CardCustomizationBloc extends Bloc<CardCustomizationEvent, CardCustomizationState> {
-  final ImagePicker _picker = ImagePicker();
+  final ImagePicker _picker;
   final SaveCardCustomization _saveCardCustomization;
 
-  CardCustomizationBloc(this._saveCardCustomization)
-    : super(const CardCustomizationState(data: CardCustomizationData())) {
+  CardCustomizationBloc(this._saveCardCustomization, {ImagePicker? imagePicker})
+    : _picker = imagePicker ?? ImagePicker(),
+      super(const CardCustomizationState(data: CardCustomizationData())) {
     on<PredefinedImageSelected>((event, emit) {
       emit(
         state.copyWith(
-          data: CardCustomizationData(
-            imagePath: event.imagePath,
-            blur: state.data.blur,
-          ),
+          data: CardCustomizationData(imagePath: event.imagePath, blur: state.data.blur),
           status: CardCustomizationStatus.initial,
           errorMessage: null,
         ),
@@ -31,10 +29,7 @@ class CardCustomizationBloc extends Bloc<CardCustomizationEvent, CardCustomizati
       if (pickedFile != null) {
         emit(
           state.copyWith(
-            data: CardCustomizationData(
-              imageFile: File(pickedFile.path),
-              blur: state.data.blur,
-            ),
+            data: CardCustomizationData(imageFile: File(pickedFile.path), blur: state.data.blur),
             status: CardCustomizationStatus.initial,
             errorMessage: null,
           ),

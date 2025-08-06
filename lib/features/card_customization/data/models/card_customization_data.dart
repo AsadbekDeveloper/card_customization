@@ -22,6 +22,5 @@ class CardCustomizationData extends Equatable {
   });
 
   @override
-  List<Object?> get props =>
-      [imagePath, imageFile, scale, offset, color1, color2, blur];
+  List<Object?> get props => [imagePath, imageFile?.path, scale, offset, color1, color2, blur];
 }
